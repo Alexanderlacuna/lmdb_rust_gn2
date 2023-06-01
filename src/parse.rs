@@ -1,15 +1,14 @@
-use lmdb::{self,Database,DatabaseFlags,Environment,EnvironmentFlags, Transaction};
-use pickle::error;
+use lmdb::{self,Database,Environment,EnvironmentFlags, Transaction};
 use serde::de::DeserializeOwned;
 use serde::{Serialize,Deserialize};
 use std::path::Path;
-
 use serde_pickle as pickle;
-
 pub struct LMDBReader {
     env:Environment,
     db:Database,
 }
+
+
 
 #[derive(Debug, Serialize, Deserialize)]
 struct LMDBDataset {
@@ -17,7 +16,6 @@ struct LMDBDataset {
     sample_names: Vec<String>,
     data:Vec<Vec<String>>
 }
-
 impl LMDBReader {
     
     pub fn new(path:&str) -> Result<Self,lmdb::Error>{
@@ -57,12 +55,13 @@ impl LMDBDataset{
 
     fn parse_data(&self){
 
+       //using parse_dataset
+
+       //what we need to do is connect step a  and b parser and parse_row with anmes
         todo!()
 
         
     }
-
-
  
 
     }
@@ -138,7 +137,7 @@ mod tests {
         use lmdb::WriteFlags;
         // Create a temporary directory for the LMDB file
         let temp_dir = tempdir::TempDir::new("lmdb_test").expect("Failed to create temporary directory");
-        let path = temp_dir.path().to_str().unwrap();
+        let _path = temp_dir.path().to_str().unwrap();
 
         // Initialize the LMDBReader
         let reader = LMDBReader::new("./data").expect("Failed to initialize reader");
