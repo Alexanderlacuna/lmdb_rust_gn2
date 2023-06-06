@@ -3,6 +3,8 @@ use serde::de::DeserializeOwned;
 use serde::{Serialize,Deserialize};
 use std::path::Path;
 use serde_pickle as pickle;
+
+#[derive(Debug)]
 pub struct LMDBReader {
     env:Environment,
     db:Database,
@@ -31,11 +33,17 @@ impl LMDBReader {
     }
     pub fn read(&self, key: &[u8]) -> Result<Option<Vec<u8>>, lmdb::Error> {
         let txn = self.env.begin_ro_txn()?;
+
+        
+
+    
         let result = match txn.get(self.db, &key) {
             Ok(value) => Some(value.to_vec()),
             Err(lmdb::Error::NotFound) => None,
             Err(err) => return Err(err),
         };
+
+        
 
         Ok(result)
     }
@@ -45,26 +53,6 @@ impl Drop for LMDBReader {
         self.env.sync(true).expect("Failed to sync LMDB environment");
     }
 }
-impl LMDBDataset{
-
-
-    fn new(bin:&[u8]) -> Self {
-        unpickle_data(&bin).expect("error")
-    }
-
-
-    fn parse_data(&self){
-
-       //using parse_dataset
-
-       //what we need to do is connect step a  and b parser and parse_row with anmes
-        todo!()
-
-        
-    }
- 
-
-    }
 
 
 use std::collections::HashMap;
@@ -153,9 +141,6 @@ mod tests {
             txn.put(dbi, key, value, WriteFlags::empty())
                 .expect("Failed to write data to LMDB");
         }
-
-
-
         txn.commit().expect("Failed to commit transaction");
 
         let result = reader.read(b"my_key").expect("Failed to read value from LMDB");
